@@ -43,8 +43,6 @@ object Ex0Wordcount {
     // Step 1: the mapper step
     // The philosophy: we want to attribute the number 1 to each word: so we create couples (word, 1).
     // Hint: look at the mapToPair method
-    // TODO write code here
-
 
     // Step 2: reducer step
     // The philosophy: now you have a couple (key, value) where the key is a word, you want to aggregate the value for each word.
@@ -52,11 +50,11 @@ object Ex0Wordcount {
     // Hint: the Spark API provides some reduce methods
     // TODO write code here
 
-    ???
+    tweets.map((_, 1)).reduceByKey(_+_)
   }
 
   /**
-   *  Now keep the word which appear strictly more than 4 times!
+   *  Now keep the words which appear strictly more than 4 times!
    */
   def filterOnWordcount(sc: SparkContext): RDD[(String, Int)] = {
     val tweets = wordcount(sc)
@@ -64,7 +62,7 @@ object Ex0Wordcount {
     // Hint: the Spark API provides a filter method
     // TODO write code here
 
-    ???
+    tweets.filter { case (word, number) => number > 4}
 
   }
 
