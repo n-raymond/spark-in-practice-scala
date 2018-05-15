@@ -35,7 +35,7 @@ object Ex2TweetMining {
     // Load the data and parse it into a Tweet.
     // Look at the Tweet Object in the TweetUtils class.
     sc.textFile(pathToFile)
-        .mapPartitions(TweetUtils.parseFromJson(_))
+        .mapPartitions(TweetUtils.parseFromJson)
 
   }
 
@@ -47,7 +47,8 @@ object Ex2TweetMining {
 
     // Hint: think about separating the word in the text field and then find the mentions
     // TODO write code here
-    ???
+
+    tweets flatMap (_.text.split(" ")) filter { word => word.startsWith("@") && word.length > 1}
   }
 
   /**
@@ -58,7 +59,7 @@ object Ex2TweetMining {
 
     // Hint: think about what you did in the wordcount example
     // TODO write code here
-    ???
+    mentions map ((_, 1)) reduceByKey (_+_)
   }
 
   /**
@@ -68,7 +69,9 @@ object Ex2TweetMining {
 
     // Hint: take a look at the sorting and take methods
     // TODO write code here
-    ???
+
+    countMentions(sc) sortBy (_._2, false) take 10
+
   }
 
 }
