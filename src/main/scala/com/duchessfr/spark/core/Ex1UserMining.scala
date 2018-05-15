@@ -44,8 +44,7 @@ object Ex1UserMining {
     val tweets = loadData(sc)
     // TODO write code here
     // Hint: the Spark API provides a groupBy method
-
-    ???
+    tweets.groupBy(_.user)
   }
 
   /**
@@ -57,7 +56,7 @@ object Ex1UserMining {
     // TODO write code here
     // Hint: think about what you did in the wordcount example
 
-    ???
+    tweets.map {tweet => (tweet.user, 1)} reduceByKey (_+_)
   }
 
 
@@ -70,7 +69,7 @@ object Ex1UserMining {
     // TODO write code here
     // Hint: the Spark API provides a sortBy method
 
-    ???
+    tweetByUserNumber(sc) sortBy (_._2, false, 1) take 10
   }
 
 }
