@@ -24,7 +24,7 @@ object Ex4InvertedIndex {
    */
   def invertedIndex(sc: SparkContext): Map[String, Iterable[Tweet]] = {
     val tweets = sc.textFile ("data/reduced-tweets.json")
-        .mapPartitions (TweetUtils.parseFromJson (_) )
+        .mapPartitions (TweetUtils.parseFromJson)
 
     // Let's try it out!
     // Hint:
@@ -32,7 +32,11 @@ object Ex4InvertedIndex {
     // Then group the tweets by hashtag
     // Finally return the inverted index as a map structure
     // TODO write code here
-    ???
+
+    tweets flatMap { tweet =>
+      val words = tweet.text split " " filter { word => (word startsWith "#") && (word.length > 1)}
+      words map ((_, tweet))
+    } groupByKey() collectAsMap()
   }
 
 }

@@ -8,7 +8,7 @@ import org.scalatest.{FunSuite, Matchers}
  *  It's not real unit tests because of the live stream context, but it can give
  *  help you anyway and run the function
  */
-class StreamingOnTweetsSpec extends FunSuite with Matchers with SharedSparkContext{
+class StreamingOnTweetsSpec extends FunSuite with Matchers with SharedSparkContext {
 
   test("should return the 10 most popular hashtag") {
     StreamingOnTweets.top10Hashtag(sc)

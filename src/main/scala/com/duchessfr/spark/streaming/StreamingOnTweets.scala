@@ -2,7 +2,6 @@ package com.duchessfr.spark.streaming
 
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.twitter._
-import org.apache.spark.SparkConf
 import org.apache.spark._
 
 /**
@@ -38,11 +37,11 @@ import org.apache.spark._
 object StreamingOnTweets extends App {
 
   def top10Hashtag(sc: SparkContext) = {
-    // TODO fill the keys and tokens
-    val CONSUMER_KEY = "TODO"
-    val CONSUMER_SECRET = "TODO"
-    val ACCESS_TOKEN = "TODO"
-    val ACCESS_TOKEN_SECRET = "TODO"
+
+    val CONSUMER_KEY = "pY7BqICFpMyapu5ndnRPNMNL4"
+    val CONSUMER_SECRET = "KnGo1VwNBO3ZC0B0AyyHX59u0GOwvEZdq7j5SnDwhmVep1q6Cd"
+    val ACCESS_TOKEN = "4077005836-bBu9ywbVLXoptEHW1IZvQ9oOSpJ2pUUiAZ3PqcU"
+    val ACCESS_TOKEN_SECRET = "IMGx4ASY1SG5wwZozybttv1RSjxUPhkysOIpHjTTDWbSY"
 
     System.setProperty("twitter4j.oauth.consumerKey", CONSUMER_KEY)
     System.setProperty("twitter4j.oauth.consumerSecret", CONSUMER_SECRET)
@@ -65,31 +64,34 @@ object StreamingOnTweets extends App {
 
     // Print the status text of the some of the tweets
     // You must see tweets appear in the console
-    val status = tweetsStream.map(_.getText)
+    val status = tweetsStream
+      .map (_.getText)
+
     // Here print the status's text: see the Status class
     // Hint: use the print method
-    // TODO write code here
-    ???
+    status.print
 
     // Find the 10 most popular Hashtag in the last minute
 
     // For each tweet in the stream filter out all the hashtags
     // stream is like a sequence of RDD so you can do all the operation you did in the first part of the hands-on
     // Hint: think about what you did in the Hashtagmining part
-    // TODO write code here
-    val hashTags = ???
+
+    val hashTags = status.flatMap(_ split " ").filter { word => word.startsWith("#") && word.length > 1}
 
     // Now here, find the 10 most popular hashtags in a 60 seconds window
     // Hint: look at the reduceByKeyAndWindow function in the spark doc.
     // Reduce last 60 seconds of data
     // Hint: look at the transform function to operate on the DStream
-    // TODO write code here
-    val top10 = ???
+
+    val top10 = hashTags map ((_, 1)) reduceByKeyAndWindow(_+_, Seconds(60)) transform(_.sortBy(_._2, false))
 
     // and return the 10 most populars
     // Hint: loop on the RDD and take the 10 most popular
-    // TODO write code here
-    ???
+
+    top10.foreachRDD {
+      _.take(10).foreach(println)
+    }
     
     // we need to tell the context to start running the computation we have setup
     // it won't work if you don't add this!

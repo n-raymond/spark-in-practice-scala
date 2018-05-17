@@ -34,7 +34,7 @@ object Ex3HashTagMining {
     // Load the data and parse it into a Tweet.
     // Look at the Tweet Object in the TweetUtils class.
     sc.textFile(pathToFile)
-        .mapPartitions(TweetUtils.parseFromJson(_))
+        .mapPartitions(TweetUtils.parseFromJson)
   }
 
   /**
@@ -44,9 +44,8 @@ object Ex3HashTagMining {
     val tweets = loadData(sc)
     // You want to return an RDD with the mentions
     // Hint: think about separating the word in the text field and then find the mentions
-    // TODO write code here
-    ???
-    }
+    tweets flatMap (_.text split " ") filter { word => word.startsWith("#") && word.length > 1}
+  }
 
 
   /**
@@ -55,8 +54,8 @@ object Ex3HashTagMining {
   def countMentions(sc: SparkContext): RDD[(String, Int)] = {
      val tags= hashtagMentionedOnTweet(sc)
     // Hint: think about what you did in the wordcount example
-    // TODO write code here
-    ???
+
+    tags map ((_, 1)) reduceByKey (_+_)
   }
 
   /**
@@ -65,8 +64,8 @@ object Ex3HashTagMining {
   def top10HashTags(sc: SparkContext): Array[(String, Int)] = {
     val countTags= countMentions(sc)
     // Hint: take a look at the sorting and take methods
-    // TODO write code here
-    ???
+
+    countTags sortBy (_._2, false) take 10
   }
 
 }
